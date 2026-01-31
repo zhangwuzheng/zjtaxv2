@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tibet Trade Link Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              tibet: {
+                red: '#8B0000',     /* Deep Maroon */
+                lightRed: '#A02020',
+                gold: '#FFD700',    /* Classic Gold */
+                cream: '#F5F5DC',   /* Background */
+                dark: '#2C1810',    /* Text Dark */
+                sky: '#003366',     /* Deep Blue for contrast */
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @media print {
+        @page { margin: 1cm; size: landscape; }
+        body { background: white; -webkit-print-color-adjust: exact; }
+        .no-print { display: none !important; }
+        /* Hide inputs in print view, but show values if possible or just hide the input section */
+        header { border-bottom: 2px solid #8B0000 !important; }
+        header h1 { color: #8B0000 !important; }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50 text-gray-800 antialiased">
+    <div id="root"></div>
+  </body>
+</html>
