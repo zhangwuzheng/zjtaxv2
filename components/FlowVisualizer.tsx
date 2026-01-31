@@ -98,7 +98,7 @@ export const FlowVisualizer: React.FC<Props> = ({ results, config }) => {
      const textColor = colorClass.replace('bg-', 'text-').replace('border-', 'text-').split(' ')[0] || 'text-gray-400';
 
      return (
-         <div className={`relative w-full h-8 flex items-center justify-center group ${textColor}`}>
+         <div className={`relative w-full h-10 flex items-center justify-center group ${textColor}`}>
              {/* Line */}
              <div className={`flow-line-base ${animClass} ${warning ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'} transition-opacity`}></div>
              
@@ -118,8 +118,8 @@ export const FlowVisualizer: React.FC<Props> = ({ results, config }) => {
              <div className={`relative z-10 px-2 py-0.5 rounded-full border shadow-sm flex items-center gap-1 bg-white ${warning ? 'border-red-200 bg-red-50' : 'border-gray-200'} transition-transform group-hover:scale-105`}>
                 {iconType && <span className={warning ? 'text-red-500' : (labelColor || 'text-gray-400')}>{icons[iconType]}</span>}
                 <div className="flex flex-col items-start leading-none">
-                    <span className={`text-[9px] font-bold ${warning ? 'text-red-700' : (labelColor || 'text-gray-700')}`}>{label}</span>
-                    {sub && <span className="text-[8px] text-gray-400 mt-0.5 scale-90 origin-left">{sub}</span>}
+                    <span className={`text-[9px] font-bold whitespace-nowrap ${warning ? 'text-red-700' : (labelColor || 'text-gray-700')}`}>{label}</span>
+                    {sub && <span className="text-[8px] text-gray-400 mt-0.5 scale-90 origin-left whitespace-nowrap">{sub}</span>}
                 </div>
              </div>
          </div>
@@ -127,7 +127,7 @@ export const FlowVisualizer: React.FC<Props> = ({ results, config }) => {
   };
 
   const ConnectionBlock = ({ goods, invoice, funds, directInvoice }: any) => (
-    <div className="flex-1 min-w-[180px] px-2 flex flex-col justify-center gap-4 py-2 opacity-90 hover:opacity-100 transition-opacity">
+    <div className="flex-1 min-w-[200px] px-2 flex flex-col justify-center gap-4 py-2 opacity-90 hover:opacity-100 transition-opacity">
        {/* 1. Goods Flow */}
        {goods && (
            <ArrowLine 

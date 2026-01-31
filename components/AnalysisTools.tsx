@@ -50,40 +50,29 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
       const profit = r.netProfit;
       
       // Cycle Calculation
-      // Cash Conversion Cycle = Inventory Days (0 assumed) + Receivable Days - Payable Days
       const receivableDays = config.retailerPaymentTermDays;
       const payableDays = config.funderPaymentTermMonths * 30;
       
-      // If Payable > Receivable, we have a negative cash conversion cycle (Free Money!)
-      // If Receivable > Payable, we have a gap we must fund.
       const fundingGap = Math.max(0, receivableDays - payableDays);
       
-      // Deal Duration (for turnover calculation)
-      // Even if we use funder money, the deal logic "locks" our operational capacity for the duration of the longest leg
+      // Deal Duration
       const dealDuration = Math.max(receivableDays, payableDays, 30); // Min 30 days floor
-      
       const annualTurnoverRate = 365 / dealDuration;
       
-      // Annualized Profit (Theoretical max if capital is reinvested immediately)
-      const annualizedProfit = profit * annualTurnoverRate;
-      
       // Annualized ROI on "Own Capital"
-      // If funding gap is 0, ROI is infinite (pure leverage). We cap it for display.
-      // If funding gap > 0, that's the equity we must put in.
       let ownCapitalRequirement = fundingGap > 0 ? r.inPriceInclTax : 0; 
       // Add operational cost as required working capital
       ownCapitalRequirement += r.operationalCost;
       
       let annualizedROE = 0;
       if (ownCapitalRequirement > 0) {
-          annualizedROE = (annualizedProfit / ownCapitalRequirement) * 100;
+          annualizedROE = (profit * annualTurnoverRate / ownCapitalRequirement) * 100;
       }
 
       return {
           dealDuration,
           fundingGap,
           annualTurnoverRate,
-          annualizedProfit,
           ownCapitalRequirement,
           annualizedROE,
           isInfinite: ownCapitalRequirement === 0 && profit > 0
@@ -100,11 +89,7 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
       const diff = targetProfit - currentNet;
       
       const taxRate = config.cangjingTaxType; 
-      // Approximate retention rate (1 - tax - surcharge - income tax)
-      const effectiveRetentionRate = 1 
-        - (taxRate * (1 + config.cangjingVatSurchargeRate/100) - taxRate) 
-        - (config.includeIncomeTax ? config.cangjingIncomeTaxRate/100 : 0);
-        
+      
       const revIncrease = diff; // Simplified
       
       const suggestedExcl = currentRev + revIncrease;
@@ -190,7 +175,6 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
           if (r.costDetails.management > 0) items.push({ label: '管理费', value: r.costDetails.management, color: 'from-purple-500 to-purple-600', bg: 'bg-purple-600', desc: '费用包:管理' });
           if (r.costDetails.other > 0) items.push({ label: '其他费用', value: r.costDetails.other, color: 'from-purple-600 to-purple-700', bg: 'bg-purple-700', desc: '费用包:其他' });
       } else if (r.operationalCost > 0) {
-          // Fallback if no details
           items.push({ label: '运营/物流', value: r.operationalCost, color: 'from-purple-400 to-purple-500', bg: 'bg-purple-500', desc: '仓储物流及杂项' });
       }
 
@@ -203,7 +187,7 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
   // --- Tabs Styling ---
   const tabs = [
       { id: 'timeline', label: '资金流全景', icon: '⏳' },
-      { id: 'compare', label: '经销 vs 代销', icon: '⚖️' }, // Renamed
+      { id: 'compare', label: '经销 vs 代销', icon: '⚖️' }, 
       { id: 'structure', label: '成本结构', icon: '🍰' },
       { id: 'sensitivity', label: '敏感性测试', icon: '📈' },
       { id: 'reverse', label: '利润倒推', icon: '🎯' },
@@ -342,7 +326,7 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
                                <div className="mt-4 pt-4 border-t border-gray-700 text-[10px] text-gray-400 leading-relaxed">
                                    计算逻辑：单笔净利润 × 年周转次数 ÷ 自有资金投入。
                                    <br/>
-                                   若回报率 > 20%，说明资金周转效率极高，是优质现金流业务。
+                                   若回报率 &gt; 20%，说明资金周转效率极高，是优质现金流业务。
                                </div>
                            </div>
                        </div>
@@ -588,7 +572,7 @@ export const AnalysisTools: React.FC<Props> = ({ config, results }) => {
                                    {(reverseCalc.suggestedIncl > results.cangjing.outPriceInclTax) ? (
                                        <span>需涨价 <span className="font-bold">+{((reverseCalc.suggestedIncl/results.cangjing.outPriceInclTax - 1)*100).toFixed(1)}%</span></span>
                                    ) : (
-                                       <span>可降价 <span className="font-bold">{((reverseCalc.suggestedIncl/results.cangjing.outPriceInclTax - 1)*100).toFixed(1)}%</span></span>
+                                       <span>可降价 <span className="font-bold">{((1 - reverseCalc.suggestedIncl/results.cangjing.outPriceInclTax)*100).toFixed(1)}%</span></span>
                                    )}
                                </div>
                            </div>
